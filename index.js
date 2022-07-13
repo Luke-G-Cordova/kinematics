@@ -4,7 +4,7 @@ const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-const size = 800;
+const size = 2000;
 const segments = [];
 const segmentLength = 1;
 
@@ -15,10 +15,12 @@ function map(x, in_min, in_max, out_min, out_max){
 class Segment {
     constructor(x, y, len, i){
         this.a = V.createNew(x, y)
+        this.olda = this.a;
         this.aVel = V.createNew(0, 0);
         this.aAcc = V.createNew(0, 0);
         this.len = len;
         this.b = V.createNew(x+len, y);
+        this.oldb = this.b;
         this.bVel = V.createNew(0, 0);
         this.bAcc = V.createNew(0, 0);
         this.angle = 0;
@@ -42,20 +44,24 @@ class Segment {
         this.bAcc.mult(0);
     }
     follow(x, y){
+        this.addAForceBro(this.a.clone().sub(this.olda).normalize().mult(.05));
+        this.addBForceBro(this.b.clone().sub(this.oldb).normalize().mult(.05));
+        this.doPhysicsMaybe();
         let target = V.createNew(x, y);
         let dir = target.clone().sub(this.a);
         this.angle = dir.getAngle();
 
+
         dir.normalize().mult(this.len);
         dir.mult(-1);
-
-        this.addAForceBro(this.bVel.mult(-1));
+        this.olda = this.a;
+        this.oldb = this.b;
         this.a = target.clone().add(dir);
         this.b = target;
     }
     draw(){
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = this.len; 
+        ctx.lineWidth = this.index; 
         ctx.beginPath();
         ctx.moveTo(this.a.x, this.a.y);
         ctx.lineTo(this.b.x, this.b.y);
@@ -63,9 +69,9 @@ class Segment {
     }
 }
 
-segments.push(new Segment(50, 50, segmentLength, 0));
+segments.push(new Segment(50, 50, segmentLength, 1));
 for(let i = 1;i<size;i++){
-    segments.push(Segment.createChild(segments[segments.length-1], i));
+    segments.push(Segment.createChild(segments[segments.length-1], 1));
 }
 
 window.addEventListener('mousemove', (e) => {
@@ -79,9 +85,9 @@ let interval = setInterval(() => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     segments[0].draw();
     for(let i = 1;i<size;i++){
-        segments[i].addAForceBro(grav);
-        segments[i].addBForceBro(grav);
-        segments[i].doPhysicsMaybe();
+        // segments[i].addAForceBro(grav);
+        // segments[i].addBForceBro(grav);
+        // segments[i].doPhysicsMaybe();
         let parent = segments[i-1];
         segments[i].follow(parent.a.x, parent.a.y);
         segments[i].draw();
