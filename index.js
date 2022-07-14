@@ -7,19 +7,19 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // initialize variables
-const size = 2;
+const size = 2000;
 const segments = [];
-const segmentLength = 100;
+const segmentLength = 1;
 const startingPos = V.createNew(canvas.width / 2, canvas.height / 8);
 
-const grav = V.createNew(0, .7);
+const grav = V.createNew(0, 9);
 let mouseX = 50;
 let mouseY = 50;
 
 // create segments
-segments.push(new Segment(startingPos.x, startingPos.y, segmentLength, {mass: 2/5}));
+segments.push(new Segment(startingPos.x, startingPos.y, segmentLength, {mass: .0005}));
 for (let i = 1; i < size; i++) {
-  segments.push(Segment.createChild(segments[segments.length - 1]));
+  segments.push(Segment.createChild(segments[segments.length - 1], {mass: map(i, 1, size, .005, .00001)}));
 }
 
 
@@ -35,12 +35,12 @@ let interval = setInterval(() => {
   for (let i = 0; i < size; i++) {
 
     // gravity
-    segments[i].addAForceBro(grav);
-    segments[i].addBForceBro(grav);
+    // segments[i].addAForceBro(grav);
+    // segments[i].addBForceBro(grav);
 
     if (i === 0) {
-      // segments[0].follow(mouseX, mouseY); 
-      segments[0].follow(segments[0].b.x, segments[0].b.y);
+      segments[0].follow(mouseX, mouseY); 
+      // segments[0].follow(segments[0].b.x, segments[0].b.y);
     } else {
       var parent = segments[i - 1];
       segments[i].follow(parent.a.x, parent.a.y);
