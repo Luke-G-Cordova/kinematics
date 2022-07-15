@@ -30,6 +30,7 @@ for (let i = 1; i < size; i++) {
 let interval = setInterval(() => {
   // clear on every loop
   ctx.fillStyle = "#34568b";
+  // ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (let i = 0; i < size; i++) {

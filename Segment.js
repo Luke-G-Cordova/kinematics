@@ -70,7 +70,6 @@ export class Segment {
     this.b = target;
   }
   draw(ctx) {
-    ctx.strokeStyle = "black";
     ctx.lineWidth = this.width;
     ctx.beginPath();
     ctx.moveTo(this.a.x, this.a.y);
